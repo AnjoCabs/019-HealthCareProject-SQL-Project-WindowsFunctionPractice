@@ -7,6 +7,7 @@
 USE hospital3project;
 
 -- 1. Rank providers by total revenue generated.
+
 SELECT 
     p.providerName,
     SUM(COALESCE(v.treatmentCost,0) + COALESCE(v.medicationCost,0) + COALESCE(v.roomCharges,0)) AS totalRevenue,
@@ -17,6 +18,7 @@ JOIN visits v
 GROUP BY p.providerName;
 
 -- 2. Rank diagnoses by total treatment cost.
+
 SELECT
 	v.diagnosisId,
     d.diagnosis,
@@ -30,6 +32,7 @@ GROUP BY
     d.diagnosis;
     
 -- 3. Rank patients by total healthcare spending.
+
 SELECT 
 	p.patientId,
     p.patientName,
@@ -44,6 +47,7 @@ GROUP BY
     
     
 -- 4. Calculate cumulative hospital revenue over time.
+
 SELECT
     YEAR(dateOfVisit) AS year_,
     MONTH(dateOfVisit) AS month_,
@@ -61,6 +65,7 @@ ORDER BY
     MONTH(dateOfVisit);
     
 -- 5. Calculate cumulative revenue by department.
+
 SELECT
     v.departmentId,
     d.department,
@@ -77,6 +82,7 @@ GROUP BY
     d.department;
     
 -- 6. Calculate cumulative patient visits by month.
+
 SELECT
     YEAR(dateOfVisit) AS year_,
     MONTH(dateOfVisit) AS month_,
@@ -93,6 +99,7 @@ ORDER BY
     MONTH(dateOfVisit);
     
 -- 7. Calculate cumulative insurance coverage amount over time
+
 SELECT
 	YEAR(dateOfVisit) AS year_,
     MONTH(dateOfVisit) AS month_,
@@ -108,6 +115,7 @@ ORDER BY
     MONTH(dateOfVisit);
     
 -- 8. Calculate running treatment costs for each provider.
+
 SELECT
     YEAR(v.dateOfVisit) AS year_,
     MONTH(v.dateOfVisit) AS month_,
@@ -131,6 +139,7 @@ ORDER BY
     v.providerId;
     
 -- 9. Calculate a 3-month moving average of hospital revenue.
+
 SELECT
     year_,
     month_,
@@ -152,6 +161,7 @@ ORDER BY
     month_;
     
 -- 10. Calculate a moving average of patient satisfaction scores.
+
 SELECT
     year_,
     month_,
@@ -173,6 +183,7 @@ ORDER BY
     month_;
     
 -- 11. Calculate a rolling average treatment cost per diagnosis.
+
 WITH monthlyDiagnosisCosts AS (
     SELECT
         d.diagnosis,
@@ -204,6 +215,7 @@ ORDER BY
     month_;
 
 -- 12. Compare each month's revenue to the previous month.
+
 WITH monthlyRevenue AS (
     SELECT
         YEAR(dateOfVisit) AS year_,
@@ -226,6 +238,7 @@ ORDER BY
     month_;
     
 -- 13. Calculate revenue growth percentage month-over-month.
+
 SELECT
 	year_,
     month_,
@@ -249,6 +262,7 @@ ORDER BY
     month_;
     
 -- 14. Identify patients whose healthcare spending increased from their previous visit.
+
 WITH patientSpending AS (
     SELECT
         visitId,
@@ -269,6 +283,7 @@ FROM patientSpending
 WHERE visitSpending > previousVisitSpending;
 
 -- 15. Find the first diagnosis recorded for each patient.
+
 WITH rankedVisits AS (
     SELECT
         v.patientId,
@@ -289,6 +304,7 @@ JOIN diagnoses d
     ON rv.firstDiagnosisId = d.diagnosisId;
     
 -- 16. Find the most recent diagnosis for each patient.
+
 WITH rankedVisits AS (
     SELECT
         v.patientId,
@@ -309,6 +325,7 @@ JOIN diagnoses d
     ON rv.firstDiagnosisId = d.diagnosisId;
     
 -- 17. Divide patients into 4 spending groups
+
 WITH patientSpending AS (
     SELECT
         patientId,
@@ -331,6 +348,7 @@ SELECT
 FROM patient_spending;
 
 -- 18. Determine which departments have revenue above the overall hospital average.
+
 WITH departmentRevenue AS (
     SELECT
         d.department,
@@ -355,6 +373,7 @@ FROM HospitalAverage
 WHERE totalDeptRevenue > overallHospitalAvg;
 
 -- 19. Find patients spending more than the average patient.
+
 WITH totalSpending AS (
     SELECT
         patientId,
@@ -377,6 +396,7 @@ FROM patientAvg
 WHERE totalSpending > avgTotalSpending;
 
 -- 20. Calculate each provider's contribution percentage to total hospital revenue.
+
 WITH providerTotalRevenue AS (
     SELECT
         v.providerId,
